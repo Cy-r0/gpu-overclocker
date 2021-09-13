@@ -1,0 +1,39 @@
+#!/usr/bin/bash
+
+# Apply overclocking parameters to my GPUs.
+
+
+if [ $# -ne 1 ]; then
+    echo "gpu-overclocker takes exactly one argument (the name of the tuning profile)"
+    exit 1
+fi
+
+case $1 in
+    default)
+        echo -e "'$1' = STOCK SETTINGS\n"
+
+        sudo nvidia-smi -i 0 -pl 260
+        sudo nvidia-smi -i 1 -pl 260
+
+        nvidia-settings -a "[gpu:0]/GPUGraphicsClockOffsetAllPerformanceLevels=0"
+        nvidia-settings -a "[gpu:1]/GPUGraphicsClockOffsetAllPerformanceLevels=0"
+
+        nvidia-settings -a "[gpu:0]/GPUGraphicsClockOffsetAllPerformanceLevels=0"
+        nvidia-settings -a "[gpu:1]/GPUGraphicsClockOffsetAllPerformanceLevels=0"
+        ;;
+    mining)
+        echo -e "'$1' = ETHEREUM MINING\n"
+
+        sudo nvidia-smi -i 0 -pl 260
+        sudo nvidia-smi -i 1 -pl 260
+
+        nvidia-settings -a "[gpu:0]/GPUGraphicsClockOffsetAllPerformanceLevels=0"
+        nvidia-settings -a "[gpu:1]/GPUGraphicsClockOffsetAllPerformanceLevels=0"
+
+        nvidia-settings -a "[gpu:0]/GPUGraphicsClockOffsetAllPerformanceLevels=0"
+        nvidia-settings -a "[gpu:1]/GPUGraphicsClockOffsetAllPerformanceLevels=0"
+        ;;
+    *)
+        echo "'$1' is not a recognised profile name! Aborting..."
+        ;;
+esac
