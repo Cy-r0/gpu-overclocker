@@ -20,7 +20,7 @@ It might run some things as sudo, so it may ask for the password.
 Run the following command to generate an xorg.conf file in /etc/X11:
 
 ```bash
-sudo nvidia-xconfig -a --cool-bits=24 --allow-empty-initial-configuration
+sudo nvidia-xconfig -a --cool-bits=28 --allow-empty-initial-configuration
 ```
 
 This will create virtual screens for all GPUs so that you can overclock all of them.
