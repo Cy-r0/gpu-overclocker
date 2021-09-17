@@ -12,34 +12,53 @@ case $1 in
     default)
         echo -e "'$1' = STOCK SETTINGS\n"
         # Default power limit and clock offsets for RTX 2080ti
-        sudo nvidia-smi -i 0 -pl 260
-        sudo nvidia-smi -i 1 -pl 260
-        nvidia-settings -a "[gpu:0]/GPUGraphicsClockOffsetAllPerformanceLevels=0"
-        nvidia-settings -a "[gpu:1]/GPUGraphicsClockOffsetAllPerformanceLevels=0"
-        nvidia-settings -a "[gpu:0]/GPUMemoryTransferRateOffsetAllPerformanceLevels=0"
-        nvidia-settings -a "[gpu:1]/GPUMemoryTransferRateOffsetAllPerformanceLevels=0"
+        PWR_0="260"
+        PWR_1="260"
+        CORE_0="0"
+        CORE_1="0"
+        MEM_0="0"
+        MEM_1="0"
         # Automatic fan speed control
         nvidia-settings -a "[gpu:0]/GPUFanControlState=0"
         nvidia-settings -a "[gpu:1]/GPUFanControlState=0"
         ;;
 
-    mining)
-        echo -e "'$1' = ETHEREUM MINING SETTINGS\n"
-        # Reduce power limit to minimise electricity cost
-        sudo nvidia-smi -i 0 -pl 140
-        sudo nvidia-smi -i 1 -pl 140
-        # Decrease core clock
-        nvidia-settings -a "[gpu:0]/GPUGraphicsClockOffsetAllPerformanceLevels=100"
-        nvidia-settings -a "[gpu:1]/GPUGraphicsClockOffsetAllPerformanceLevels=100"
-        # Increase memory clock
-        nvidia-settings -a "[gpu:0]/GPUMemoryTransferRateOffsetAllPerformanceLevels=1800"
-        nvidia-settings -a "[gpu:1]/GPUMemoryTransferRateOffsetAllPerformanceLevels=1800"
-        # Manual fan control (fixed speed)
+    mining_140)
+        echo -e "'$1' = ETHEREUM MINING AT 140 W PER GPU\n"
+        PWR_0="140"
+        PWR_1="140"
+        CORE_0="100"
+        CORE_1="100"
+        MEM_0="1800"
+        MEM_1="1800"
+        # Fans
+        nvidia-settings -a "[gpu:0]/GPUFanControlState=1" -a "[fan:0]/GPUTargetFanSpeed=75"
+        nvidia-settings -a "[gpu:1]/GPUFanControlState=1" -a "[fan:1]/GPUTargetFanSpeed=75"
+        ;;
+
+    mining_150)
+        echo -e "'$1' = ETHEREUM MINING AT 150 W PER GPU\n"
+        PWR_0="150"
+        PWR_1="150"
+        CORE_0="200"
+        CORE_1="200"
+        MEM_0="2600"
+        MEM_1="2600"
+        # Fans
         nvidia-settings -a "[gpu:0]/GPUFanControlState=1" -a "[fan:0]/GPUTargetFanSpeed=75"
         nvidia-settings -a "[gpu:1]/GPUFanControlState=1" -a "[fan:1]/GPUTargetFanSpeed=75"
         ;;
 
     *)
         echo "'$1' is not a recognised profile name! Aborting..."
+        exit 1
         ;;
 esac
+
+# Apply overclocking parameters
+sudo nvidia-smi -i 0 -pl $PWR_0
+sudo nvidia-smi -i 1 -pl $PWR_1
+nvidia-settings -a "[gpu:0]/GPUGraphicsClockOffsetAllPerformanceLevels=$CORE_0"
+nvidia-settings -a "[gpu:1]/GPUGraphicsClockOffsetAllPerformanceLevels=$CORE_1"
+nvidia-settings -a "[gpu:0]/GPUMemoryTransferRateOffsetAllPerformanceLevels=$MEM_0"
+nvidia-settings -a "[gpu:1]/GPUMemoryTransferRateOffsetAllPerformanceLevels=$MEM_1"
